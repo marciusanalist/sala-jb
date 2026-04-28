@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casa JB — Salas</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pk:       #E83E8C;
+      --pk-h:     #D02C7A;
+      --pk-l:     #FCE8F3;
+
+      --tc:       #C85A2C;
+      --tc-h:     #A84820;
+      --tc-l:     #FDEEE6;
+
+      --bg:       #F5F5F5;
+      --sur:      #FFFFFF;
+      --bdr:      #E8E8E8;
+      --bdr2:     #D0D0D0;
+
+      --t1:       #111111;
+      --t2:       #555555;
+      --t3:       #999999;
+      --t4:       #C8C8C8;
+
+      --r:        12px;
+      --rsm:      8px;
+      --rxs:      6px;
+
+      --sh:       0 1px 3px rgba(0,0,0,.06);
+      --shd:      0 8px 24px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ─────────────────────────────── */
+    header {
+      background: var(--sur);
+      border-bottom: 1px solid var(--bdr);
+      height: 56px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 12px;
+    }
+
+    .logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--pk), var(--tc));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 13px; font-weight: 700;
+    }
+
+    .logo-text { font-size: 15px; font-weight: 600; letter-spacing: -.3px; }
+    .logo-text small { font-size: 12px; color: var(--t3); font-weight: 400; }
+
+    .week-nav {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg); padding: 5px 8px;
+      border-radius: 10px; border: 1px solid var(--bdr);
+    }
+
+    .nav-btn {
+      width: 26px; height: 26px;
+      border: 1px solid var(--bdr2); background: var(--sur);
+      border-radius: var(--rxs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--t2); font-size: 16px; cursor: pointer;
+      transition: all .15s;
+    }
+    .nav-btn:hover { background: var(--pk-l); border-color: var(--pk); color: var(--pk); }
+
+    .week-lbl { font-size: 12px; font-weight: 500; color: var(--t2); min-width: 165px; text-align: center; white-space: nowrap; }
+
+    .today-btn {
+      font-size: 11px; font-weight: 600; padding: 3px 10px;
+      border: 1px solid var(--bdr2); background: var(--sur);
+      border-radius: 20px; cursor: pointer; color: var(--t3);
+      transition: all .15s;
+    }
+    .today-btn:hover { background: var(--pk-l); border-color: var(--pk); color: var(--pk); }
+
+    /* ── Main ───────────────────────────────── */
+    main { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* ── Floor divider ──────────────────────── */
+    .floor-divider {
+      font-size: 10px; font-weight: 700; color: var(--t3);
+      text-transform: uppercase; letter-spacing: .8px;
+      padding: 12px 4px 4px; margin-top: 8px;
+    }
+
+    /* ── Room section ───────────────────────── */
+    .room-section { border-radius: var(--r); border: 1px solid var(--bdr); background: var(--sur); overflow: hidden; }
+
+    .room-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--bdr);
+      background: var(--sur);
+    }
+
+    .room-header.collapsed { border-bottom: none; }
+
+    .room-title { font-size: 13px; font-weight: 600; color: var(--t1); }
+
+    .room-badge {
+      font-size: 10px; font-weight: 600; padding: 2px 7px;
+      border-radius: 20px; flex-shrink: 0;
+    }
+    .badge-pk { background: var(--pk-l); color: #9E2660; }
+    .badge-tc { background: var(--tc-l); color: #7A3415; }
+    .badge-gray { background: #F0F0F0; color: var(--t3); }
+
+    .room-toggle {
+      margin-left: auto; flex-shrink: 0;
+      font-size: 11px; font-weight: 600; padding: 5px 13px;
+      border: 1.5px solid var(--pk); background: var(--pk-l);
+      border-radius: 20px; cursor: pointer; color: var(--pk);
+      transition: all .15s; white-space: nowrap;
+    }
+    .room-toggle:hover { background: var(--pk); color: #fff; }
+
+    /* ── Day header row (shared) ────────────── */
+    .day-header-row { display: contents; }
+
+    .dh-corner { background: #FAFAFA; border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr); }
+
+    .dh {
+      padding: 8px 4px 6px; text-align: center;
+      border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+    }
+    .dh:last-child { border-right: none; }
+
+    .d-name { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--t3); }
+    .d-num { font-size: 16px; font-weight: 300; color: var(--t1); line-height: 1.3; margin-top: 1px; }
+
+    .dh.is-today .d-name { color: var(--pk); }
+    .dh.is-today .d-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px;
+      background: var(--pk); color: #fff;
+      border-radius: 50%; font-size: 13px; font-weight: 500;
+    }
+    .dh.is-wknd { background: #FAFAFA; }
+
+    /* ── Meeting Room grid ──────────────────── */
+    .meet-grid { display: grid; grid-template-columns: 50px repeat(7, 1fr); }
+
+    .tl {
+      background: #FAFAFA; border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+      padding: 0 6px; display: flex; align-items: flex-start; justify-content: flex-end;
+      padding-top: 6px; font-size: 9px; color: var(--t4);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ms {
+      border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+      min-height: 42px; padding: 2px; cursor: pointer;
+      transition: background .1s; position: relative;
+    }
+    .ms:last-child { border-right: none; }
+    .ms.avail { display: flex; align-items: center; justify-content: center; }
+    .ms.avail:hover { background: var(--pk-l); }
+    .ms.avail::after { content: '+'; font-size: 20px; font-weight: 300; color: transparent; transition: color .15s; pointer-events: none; }
+    .ms.avail:hover::after { color: var(--pk); }
+    .ms.wknd { background: #FAFAFA; cursor: default; }
+    .ms.wknd:hover { background: #FAFAFA; }
+    .ms.bk-start, .ms.bk-cont { background: var(--pk-l); cursor: pointer; }
+
+    .meet-chip {
+      background: var(--pk); color: #fff; border-radius: var(--rxs);
+      padding: 4px 7px; height: 100%;
+      display: flex; flex-direction: column; justify-content: center; gap: 1px;
+    }
+    .chip-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chip-time { font-size: 9px; opacity: .8; }
+
+    /* ── Work Room grid ─────────────────────── */
+    .work-grid { display: grid; grid-template-columns: 158px repeat(7, 1fr); }
+
+    .pos-cell {
+      background: #FAFAFA; border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+      padding: 8px 10px 8px 14px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .pos-label { font-size: 11px; font-weight: 500; color: var(--t2); }
+    .pos-equip { font-size: 10px; color: var(--t4); margin-top: 1px; }
+
+    .ws {
+      border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+      min-height: 48px; padding: 4px 3px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .1s;
+    }
+    .ws:last-child { border-right: none; }
+    .ws.avail:hover { background: var(--tc-l); }
+    .ws.wknd { background: #FAFAFA; cursor: default; }
+    .ws.wknd:hover { background: #FAFAFA; }
+    .ws.booked { background: var(--tc-l); cursor: pointer; }
+
+    .work-chip {
+      background: var(--tc); color: #fff; border-radius: var(--rxs);
+      padding: 4px 7px; font-size: 10px; font-weight: 600;
+      width: 100%; text-align: center;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Last row: no bottom border */
+    .last-pos .pos-cell, .last-pos .ws { border-bottom: none; }
+
+    /* ── Modal ──────────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,10,10,.35); backdrop-filter: blur(6px);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--sur); border-radius: var(--r); box-shadow: var(--shd);
+      width: 380px; max-width: calc(100vw - 32px); overflow: hidden;
+      transform: translateY(10px) scale(.97);
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1);
+    }
+    .overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-head { padding: 20px 20px 0; }
+    .modal-title { font-size: 15px; font-weight: 600; }
+    .modal-sub { font-size: 12px; color: var(--t3); margin-top: 3px; }
+
+    .modal-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+    .f-label {
+      display: block; font-size: 10px; font-weight: 700;
+      color: var(--t2); text-transform: uppercase; letter-spacing: .4px;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%; padding: 9px 11px;
+      border: 1px solid var(--bdr2); border-radius: var(--rsm);
+      font-size: 13px; font-family: inherit; color: var(--t1);
+      background: var(--sur); outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--pk); box-shadow: 0 0 0 3px var(--pk-l);
+    }
+    textarea { resize: vertical; min-height: 58px; }
+
+    .time-pair { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+    .time-pair span { font-size: 12px; color: var(--t3); text-align: center; }
+
+    .modal-foot { padding: 0 20px 20px; display: flex; gap: 8px; justify-content: flex-end; }
+
+    .btn {
+      padding: 9px 18px; border-radius: var(--rsm);
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: 1px solid transparent;
+      transition: all .15s; white-space: nowrap;
+    }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-ghost  { background: var(--sur); border-color: var(--bdr2); color: var(--t2); }
+    .btn-ghost:hover:not(:disabled) { background: var(--bg); }
+    .btn-pk     { background: var(--pk); color: #fff; }
+    .btn-pk:hover:not(:disabled) { background: var(--pk-h); }
+    .btn-tc     { background: var(--tc); color: #fff; }
+    .btn-tc:hover:not(:disabled) { background: var(--tc-h); }
+    .btn-danger { background: #FEF2F2; border-color: #FECACA; color: #DC2626; }
+    .btn-danger:hover:not(:disabled) { background: #FEE2E2; }
+
+    .info-box {
+      background: var(--bg); border: 1px solid var(--bdr);
+      border-radius: var(--rsm); padding: 12px 14px;
+      font-size: 13px; color: var(--t2); line-height: 1.8;
+    }
+    .info-box strong { color: var(--t1); }
+
+    /* ── Toast ──────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--t1); color: #fff;
+      padding: 10px 18px; border-radius: 24px;
+      font-size: 13px; font-weight: 500; z-index: 400;
+      opacity: 0; pointer-events: none; white-space: nowrap;
+      transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.success { background: #15803d; }
+    #toast.error   { background: #dc2626; }
+
+    /* ── Name manager panel ─────────────────── */
+    .names-panel {
+      position: fixed; top: 0; right: -340px; width: 320px; height: 100vh;
+      background: var(--sur); border-left: 1px solid var(--bdr);
+      z-index: 300; padding: 0; transition: right .3s cubic-bezier(.4,0,.2,1);
+      display: flex; flex-direction: column;
+    }
+    .names-panel.open { right: 0; }
+
+    .names-panel-head {
+      padding: 18px 20px; border-bottom: 1px solid var(--bdr);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .names-panel-title { font-size: 14px; font-weight: 600; }
+    .close-panel {
+      width: 28px; height: 28px; border: 1px solid var(--bdr2);
+      background: var(--sur); border-radius: var(--rxs);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--t3); transition: all .15s;
+    }
+    .close-panel:hover { background: var(--bg); color: var(--t1); }
+
+    .names-panel-body { padding: 16px 20px; flex: 1; overflow-y: auto; }
+    .names-add { display: flex; gap: 8px; margin-bottom: 16px; }
+    .names-add input { flex: 1; }
+    .names-add button {
+      padding: 9px 14px; background: var(--pk); color: #fff;
+      border: none; border-radius: var(--rsm); font-size: 13px;
+      font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .names-add button:hover { background: var(--pk-h); }
+
+    #names-list-ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .name-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 10px; border-radius: var(--rxs);
+      background: var(--bg); font-size: 12px; color: var(--t2);
+    }
+    .name-item:hover { background: #EFEFEF; }
+    .name-del {
+      background: none; border: none; cursor: pointer; color: var(--t4);
+      font-size: 16px; line-height: 1; padding: 0 2px;
+    }
+    .name-del:hover { color: #DC2626; }
+
+    .names-gear {
+      font-size: 11px; font-weight: 600; padding: 4px 12px;
+      border: 1px solid var(--bdr2); background: var(--sur);
+      border-radius: 20px; cursor: pointer; color: var(--t3);
+      transition: all .15s; margin-left: auto;
+    }
+    .names-gear:hover { background: var(--bg); color: var(--t2); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">JB</div>
+    <div class="logo-text">Casa JB <small>· Salas</small></div>
+  </div>
+
+  <div class="week-nav">
+    <button class="nav-btn" id="btn-prev">&#8249;</button>
+    <span class="week-lbl" id="week-lbl"></span>
+    <button class="nav-btn" id="btn-next">&#8250;</button>
+    <button class="today-btn" id="btn-today">Hoje</button>
+  </div>
+
+  <button class="names-gear" id="btn-names" title="Gerenciar lista de nomes">Nomes &#9998;</button>
+</header>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════ -->
+<main id="main">
+  <p style="padding:40px;text-align:center;color:var(--t3);">Carregando…</p>
+</main>
+
+<!-- ═══ BOOKING MODAL ════════════════════════════════════ -->
+<div class="overlay" id="bk-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="bk-title">Reservar</div>
+      <div class="modal-sub"   id="bk-sub"></div>
+    </div>
+    <div class="modal-body">
+      <div>
+        <label class="f-label">Nome *</label>
+        <input type="text" id="bk-name" list="names-dl" placeholder="Selecione ou digite o nome…" autocomplete="off">
+        <datalist id="names-dl"></datalist>
+      </div>
+      <div id="bk-time-group">
+        <label class="f-label">Horário</label>
+        <div class="time-pair">
+          <select id="bk-start"></select>
+          <span>→</span>
+          <select id="bk-end"></select>
+        </div>
+      </div>
+      <div>
+        <label class="f-label">Observações <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></label>
+        <textarea id="bk-notes" placeholder="Pauta, equipe, equipamentos…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="bk-cancel-btn">Cancelar</button>
+      <button class="btn btn-pk"    id="bk-confirm-btn">Reservar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CANCEL MODAL ══════════════════════════════════════ -->
+<div class="overlay" id="cn-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Cancelar reserva</div>
+      <div class="modal-sub">Esta ação não pode ser desfeita.</div>
+    </div>
+    <div class="modal-body">
+      <div class="info-box" id="cn-info"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost"  id="cn-back-btn">Voltar</button>
+      <button class="btn btn-danger" id="cn-confirm-btn">Cancelar reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAMES PANEL ═══════════════════════════════════════ -->
+<div class="names-panel" id="names-panel">
+  <div class="names-panel-head">
+    <span class="names-panel-title">Gerenciar nomes</span>
+    <button class="close-panel" id="close-names">&#215;</button>
+  </div>
+  <div class="names-panel-body">
+    <div class="names-add">
+      <input type="text" id="new-name-input" placeholder="Novo nome…">
+      <button id="add-name-btn">Adicionar</button>
+    </div>
+    <ul id="names-list-ul"></ul>
+  </div>
+</div>
+
+<!-- ═══ TOAST ══════════════════════════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ═══ SCRIPT ════════════════════════════════════════════ -->
+<script>
+/* ─── Constants ─────────────────────────────────────────── */
+const HOURS_START = 8, HOURS_END = 20;
+const DAYS_SHORT  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MONTHS      = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MONTHS_LG   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+/* ─── State ──────────────────────────────────────────────── */
+let weekStart   = getMonday(new Date());
+let bookings    = [];
+let bookingMap  = {};
+let rooms       = [];
+let names       = [];
+let pending     = null;
+let hiddenRooms = new Set();
+
+/* ─── Date utilities ─────────────────────────────────────── */
+function getMonday(d) {
+  const x = new Date(d);
+  const day = x.getDay();
+  x.setDate(x.getDate() - (day === 0 ? 6 : day - 1));
+  x.setHours(0,0,0,0);
+  return x;
+}
+function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function fmt(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function isToday(d) {
+  const t = new Date();
+  return d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
+}
+function isWknd(d) { const day=d.getDay(); return day===0||day===6; }
+function weekDays() { return Array.from({length:7},(_,i)=>addDays(weekStart,i)); }
+function hhmm(h) { return `${String(h).padStart(2,'0')}:00`; }
+
+/* ─── API ────────────────────────────────────────────────── */
+async function apiGet(url) {
+  const r = await fetch(url); return r.json();
+}
+async function apiPost(url, body) {
+  const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || 'Erro');
+  return data;
+}
+async function apiDel(url) {
+  const r = await fetch(url, {method:'DELETE'});
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || 'Erro');
+  return data;
+}
+
+async function loadAll() {
+  [rooms, names] = await Promise.all([apiGet('/api/rooms'), apiGet('/api/names')]);
+  updateNamesDl();
+}
+
+async function loadBookings() {
+  const days = weekDays();
+  try {
+    bookings = await apiGet(`/api/bookings?start=${fmt(days[0])}&end=${fmt(days[6])}`);
+    bookingMap = Object.fromEntries(bookings.map(b => [b.id, b]));
+  } catch { bookings = []; bookingMap = {}; }
+}
+
+/* ─── Toast ──────────────────────────────────────────────── */
+let toastT;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = `show ${type}`;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.className='', 3000);
+}
+
+/* ─── Names datalist ─────────────────────────────────────── */
+function updateNamesDl() {
+  const dl = document.getElementById('names-dl');
+  dl.innerHTML = names.map(n => `<option value="${esc(n)}">`).join('');
+}
+
+/* ─── Toggle room ────────────────────────────────────────── */
+function toggleRoom(roomId) {
+  const body = document.getElementById(`body-${roomId}`);
+  const btn  = document.getElementById(`tog-${roomId}`);
+  if (!body || !btn) return;
+  const nowHidden = body.style.display === 'none';
+  body.style.display  = nowHidden ? '' : 'none';
+  btn.textContent     = nowHidden ? 'Ocultar' : 'Mostrar';
+  if (nowHidden) hiddenRooms.delete(roomId); else hiddenRooms.add(roomId);
+}
+
+/* ─── Modals ─────────────────────────────────────────────── */
+function openOv(id)  { document.getElementById(id).classList.add('open'); }
+function closeOv(id) { document.getElementById(id).classList.remove('open'); }
+
+function openBookModal({ room, position, date, startHour }) {
+  const isMeet = room.type === 'meeting';
+  pending = { room, position, date, isMeet };
+
+  const ds = date.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+  document.getElementById('bk-title').textContent = `Reservar — ${room.name}`;
+  document.getElementById('bk-sub').textContent   = position ? `${position.label} · ${ds}` : ds;
+  document.getElementById('bk-name').value  = '';
+  document.getElementById('bk-notes').value = '';
+
+  const tg  = document.getElementById('bk-time-group');
+  const btn = document.getElementById('bk-confirm-btn');
+
+  if (isMeet) {
+    tg.style.display = '';
+    btn.className = 'btn btn-pk';
+    const ss = document.getElementById('bk-start');
+    const es = document.getElementById('bk-end');
+    ss.innerHTML = '';
+    es.innerHTML = '';
+    for (let h=HOURS_START; h<HOURS_END; h++)  ss.innerHTML += `<option value="${hhmm(h)}">${hhmm(h)}</option>`;
+    for (let h=HOURS_START+1; h<=HOURS_END; h++) es.innerHTML += `<option value="${hhmm(h)}">${hhmm(h)}</option>`;
+    const sh = startHour ?? HOURS_START;
+    ss.value = hhmm(sh);
+    es.value = hhmm(Math.min(sh+1, HOURS_END));
+  } else {
+    tg.style.display = 'none';
+    btn.className = 'btn btn-tc';
+  }
+  openOv('bk-overlay');
+  setTimeout(() => document.getElementById('bk-name').focus(), 100);
+}
+
+function openCancelModal(bookingId) {
+  const b = bookingMap[bookingId];
+  if (!b) return;
+  pending = { cancel: b };
+  const room = rooms.find(r => r.id === b.room_id);
+  const pos  = room?.positions?.find(p => p.id === b.position_id);
+  const d    = new Date(b.date + 'T12:00:00');
+  const ds   = d.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+  let html   = `<strong>${b.person_name}</strong><br>`;
+  if (pos) html += `${room.name} · ${pos.label}<br>`;
+  html += ds;
+  if (b.start_time) html += `<br>${b.start_time} – ${b.end_time}`;
+  if (b.notes)      html += `<br><em style="font-size:12px;color:var(--t3)">${b.notes}</em>`;
+  document.getElementById('cn-info').innerHTML = html;
+  openOv('cn-overlay');
+}
+
+/* ─── Render helpers ─────────────────────────────────────── */
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildDayHeaders() {
+  const days = weekDays();
+  let h = '';
+  days.forEach(d => {
+    h += `<div class="dh${isToday(d)?' is-today':''}${isWknd(d)?' is-wknd':''}">
+      <div class="d-name">${DAYS_SHORT[d.getDay()]}</div>
+      <div class="d-num">${d.getDate()}</div>
+    </div>`;
+  });
+  return h;
+}
+
+/* ─── Render: Meeting Room ───────────────────────────────── */
+function buildMeetGrid(days) {
+  const meetBks = bookings.filter(b => b.room_id === 'reserva');
+  const byDate = {};
+  days.forEach(d => byDate[fmt(d)] = []);
+  meetBks.forEach(b => { if (byDate[b.date]) byDate[b.date].push(b); });
+
+  function findBk(ds, st, en) {
+    return (byDate[ds]||[]).find(b => b.start_time < en && b.end_time > st) || null;
+  }
+
+  let html = `<div class="meet-grid">
+    <div class="dh-corner"></div>${buildDayHeaders()}`;
+
+  for (let h=HOURS_START; h<HOURS_END; h++) {
+    const st = hhmm(h), en = hhmm(h+1);
+    html += `<div class="tl">${st}</div>`;
+    days.forEach(d => {
+      const ds = fmt(d);
+      if (isWknd(d)) { html += `<div class="ms wknd"></div>`; return; }
+      const b = findBk(ds, st, en);
+      if (!b) {
+        html += `<div class="ms avail"
+          data-action="book" data-room="reserva" data-date="${ds}" data-hour="${h}"></div>`;
+        return;
+      }
+      if (b.start_time === st) {
+        html += `<div class="ms bk-start" data-action="cancel" data-bid="${b.id}">
+          <div class="meet-chip">
+            <div class="chip-name">${esc(b.person_name)}</div>
+            <div class="chip-time">${b.start_time}–${b.end_time}</div>
+          </div></div>`;
+      } else {
+        html += `<div class="ms bk-cont" data-action="cancel" data-bid="${b.id}"></div>`;
+      }
+    });
+  }
+  return html + '</div>';
+}
+
+/* ─── Render: Work Room ──────────────────────────────────── */
+function buildWorkGridFlat(room, days) {
+  let html = `<div class="work-grid">
+    <div class="dh-corner" style="border-bottom:1px solid var(--bdr)"></div>${buildDayHeaders()}`;
+
+  room.positions.forEach((pos, pi) => {
+    const isLast = pi === room.positions.length - 1;
+    const base   = 'pos-cell';
+    const wsBase = 'ws';
+
+    // Position label cell
+    html += `<div class="${base}">
+      <span class="pos-label">${esc(pos.label)}</span>
+      ${pos.equipment ? `<span class="pos-equip">${esc(pos.equipment)}</span>` : ''}
+    </div>`;
+
+    days.forEach(d => {
+      const ds = fmt(d);
+      if (isWknd(d)) {
+        html += `<div class="${wsBase} wknd${isLast?' last-ws':''}"></div>`;
+        return;
+      }
+      const b = bookings.find(bk => bk.room_id===room.id && bk.position_id===pos.id && bk.date===ds);
+      if (b) {
+        html += `<div class="${wsBase} booked${isLast?' last-ws':''}"
+          data-action="cancel" data-bid="${b.id}">
+          <div class="work-chip">${esc(b.person_name)}</div>
+        </div>`;
+      } else {
+        html += `<div class="${wsBase} avail${isLast?' last-ws':''}"
+          data-action="book" data-room="${room.id}" data-pos="${pos.id}" data-date="${ds}"></div>`;
+      }
+    });
+
+  });
+
+  return html + '</div>';
+}
+
+/* ─── Render: Full page ──────────────────────────────────── */
+function render() {
+  const days = weekDays();
+  const meeting = rooms.find(r => r.id === 'reserva');
+  const desk = rooms.filter(r => r.type === 'desk');
+  const floors = [...new Set(desk.map(r => r.floor))].sort();
+
+  let html = '';
+
+  // Sala de Reunião
+  if (meeting) {
+    const hidden = hiddenRooms.has('reserva');
+    html += `
+    <div class="room-section">
+      <div class="room-header${hidden?' collapsed':''}">
+        <span class="room-title">Sala de Reunião</span>
+        <span class="room-badge badge-pk">Por horário · 08h–20h</span>
+        <button class="room-toggle" id="tog-reserva" onclick="toggleRoom('reserva')">${hidden?'Mostrar':'Ocultar'}</button>
+      </div>
+      <div id="body-reserva" style="${hidden?'display:none':''}">
+        ${buildMeetGrid(days)}
+      </div>
+    </div>`;
+  }
+
+  // Floors
+  floors.forEach(floor => {
+    const floorRooms = desk.filter(r => r.floor === floor);
+    html += `<div class="floor-divider">${floor}º Andar</div>`;
+    floorRooms.forEach(room => {
+      const hidden = hiddenRooms.has(room.id);
+      html += `
+      <div class="room-section">
+        <div class="room-header${hidden?' collapsed':''}">
+          <span class="room-title">${esc(room.name)}</span>
+          <span class="room-badge badge-gray">${room.positions.length} posições</span>
+          <button class="room-toggle" id="tog-${room.id}" onclick="toggleRoom('${room.id}')">${hidden?'Mostrar':'Ocultar'}</button>
+        </div>
+        <div id="body-${room.id}" style="${hidden?'display:none':''}">
+          ${buildWorkGridFlat(room, days)}
+        </div>
+      </div>`;
+    });
+  });
+
+  document.getElementById('main').innerHTML = html;
+
+  // Fix last-row borders (flat grid hack)
+  document.querySelectorAll('.work-grid').forEach(grid => {
+    const allCells = Array.from(grid.children).slice(8); // skip header row (1 corner + 7 day headers)
+    const cols = 8; // 1 pos + 7 days
+    // Find cells in last row
+    const total = allCells.length;
+    const lastRowStart = total - cols;
+    for (let i = lastRowStart; i < total; i++) {
+      if (allCells[i]) allCells[i].style.borderBottom = 'none';
+    }
+  });
+}
+
+function updateHeader() {
+  const days = weekDays();
+  const s = days[0], e = days[6];
+  let lbl;
+  if (s.getMonth() === e.getMonth()) {
+    lbl = `${s.getDate()}–${e.getDate()} ${MONTHS_LG[s.getMonth()]} ${s.getFullYear()}`;
+  } else {
+    lbl = `${s.getDate()} ${MONTHS[s.getMonth()]} – ${e.getDate()} ${MONTHS[e.getMonth()]} ${e.getFullYear()}`;
+  }
+  document.getElementById('week-lbl').textContent = lbl;
+}
+
+async function fullRender() {
+  updateHeader();
+  await loadBookings();
+  render();
+}
+
+/* ─── Event delegation ───────────────────────────────────── */
+document.getElementById('main').addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const { action, room: roomId, pos: posId, date, hour, bid } = el.dataset;
+
+  if (action === 'book') {
+    const room = rooms.find(r => r.id === roomId);
+    if (!room) return;
+    const position = posId ? room.positions.find(p => p.id === posId) : null;
+    openBookModal({ room, position, date: new Date(date + 'T12:00:00'), startHour: hour ? parseInt(hour) : null });
+  } else if (action === 'cancel') {
+    openCancelModal(parseInt(bid));
+  }
+});
+
+/* ─── Week navigation ────────────────────────────────────── */
+document.getElementById('btn-prev').addEventListener('click', () => { weekStart = addDays(weekStart,-7); fullRender(); });
+document.getElementById('btn-next').addEventListener('click', () => { weekStart = addDays(weekStart, 7); fullRender(); });
+document.getElementById('btn-today').addEventListener('click', () => { weekStart = getMonday(new Date()); fullRender(); });
+
+/* ─── Booking modal ──────────────────────────────────────── */
+document.getElementById('bk-cancel-btn').addEventListener('click', () => closeOv('bk-overlay'));
+document.getElementById('bk-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeOv('bk-overlay'); });
+
+document.getElementById('bk-confirm-btn').addEventListener('click', async () => {
+  const name = document.getElementById('bk-name').value.trim();
+  if (!name) { document.getElementById('bk-name').focus(); return; }
+
+  const { room, position, date, isMeet } = pending;
+  const payload = { room_id: room.id, date: fmt(date), person_name: name, notes: document.getElementById('bk-notes').value.trim() };
+
+  if (isMeet) {
+    payload.start_time = document.getElementById('bk-start').value;
+    payload.end_time   = document.getElementById('bk-end').value;
+    if (payload.start_time >= payload.end_time) { toast('Fim deve ser após o início','error'); return; }
+  } else {
+    payload.position_id = position.id;
+  }
+
+  const btn = document.getElementById('bk-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Reservando…';
+  try {
+    await apiPost('/api/bookings', payload);
+    // New name added automatically by server; refresh local list
+    names = await apiGet('/api/names');
+    updateNamesDl();
+    closeOv('bk-overlay');
+    toast('Reserva criada!','success');
+    await fullRender();
+  } catch(err) {
+    toast(err.message,'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Reservar';
+  }
+});
+
+/* ─── Cancel modal ───────────────────────────────────────── */
+document.getElementById('cn-back-btn').addEventListener('click', () => closeOv('cn-overlay'));
+document.getElementById('cn-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeOv('cn-overlay'); });
+
+document.getElementById('cn-confirm-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('cn-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Cancelando…';
+  try {
+    await apiDel(`/api/bookings/${pending.cancel.id}`);
+    closeOv('cn-overlay');
+    toast('Reserva cancelada');
+    await fullRender();
+  } catch { toast('Erro ao cancelar','error'); }
+  finally { btn.disabled = false; btn.textContent = 'Cancelar reserva'; }
+});
+
+/* ─── Names panel ────────────────────────────────────────── */
+document.getElementById('btn-names').addEventListener('click', () => {
+  document.getElementById('names-panel').classList.add('open');
+  renderNamesList();
+});
+document.getElementById('close-names').addEventListener('click', () => {
+  document.getElementById('names-panel').classList.remove('open');
+});
+
+function renderNamesList() {
+  const ul = document.getElementById('names-list-ul');
+  ul.innerHTML = names.map(n => `
+    <li class="name-item">
+      <span>${esc(n)}</span>
+      <button class="name-del" data-name="${esc(n)}" title="Remover">&#215;</button>
+    </li>`).join('');
+}
+
+document.getElementById('names-list-ul').addEventListener('click', async e => {
+  const btn = e.target.closest('.name-del');
+  if (!btn) return;
+  const name = btn.dataset.name;
+  if (!confirm(`Remover "${name}" da lista?`)) return;
+  try {
+    names = await apiDel(`/api/names/${encodeURIComponent(name)}`);
+    updateNamesDl();
+    renderNamesList();
+    toast('Nome removido');
+  } catch { toast('Erro ao remover','error'); }
+});
+
+document.getElementById('add-name-btn').addEventListener('click', async () => {
+  const inp = document.getElementById('new-name-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  try {
+    names = await apiPost('/api/names', { name: val });
+    updateNamesDl();
+    renderNamesList();
+    inp.value = '';
+    toast('Nome adicionado!','success');
+  } catch { toast('Erro ao adicionar','error'); }
+});
+document.getElementById('new-name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('add-name-btn').click();
+});
+
+/* ─── ESC closes modals ──────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeOv('bk-overlay');
+    closeOv('cn-overlay');
+    document.getElementById('names-panel').classList.remove('open');
+  }
+});
+
+/* ─── Init ───────────────────────────────────────────────── */
+(async () => {
+  await loadAll();
+  await fullRender();
+})();
+</script>
+
+</body>
+</html>
