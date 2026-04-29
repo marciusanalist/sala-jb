@@ -249,6 +249,47 @@ app.delete('/api/bookings/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// ─── Frequency / Attendance ───────────────────────────────────────────────────
+app.get('/api/frequency', (req, res) => {
+  const { year, month } = req.query;
+  if (!year || !month) return res.status(400).json({ error: 'year e month obrigatórios' });
+
+  const y = parseInt(year), m = parseInt(month);
+  if (isNaN(y) || isNaN(m) || m < 1 || m > 12)
+    return res.status(400).json({ error: 'Parâmetros inválidos' });
+
+  const pad = n => String(n).padStart(2, '0');
+  const start = `${y}-${pad(m)}-01`;
+  const lastDay = new Date(y, m, 0).getDate();
+  const end = `${y}-${pad(m)}-${pad(lastDay)}`;
+
+  // DISTINCT person+date: deduplicates multiple bookings on same day
+  const rows = db.prepare(`
+    SELECT DISTINCT person_name, date
+    FROM bookings
+    WHERE date >= ? AND date <= ?
+      AND room_id != 'reserva'
+    ORDER BY person_name, date
+  `).all(start, end);
+
+  // Group by person
+  const personMap = {};
+  rows.forEach(({ person_name, date }) => {
+    if (!personMap[person_name]) personMap[person_name] = [];
+    personMap[person_name].push(date);
+  });
+
+  const people = Object.entries(personMap)
+    .map(([name, dates]) => ({ name, days: dates.length, dates }))
+    .sort((a, b) => b.days - a.days);
+
+  // Daily count of unique people (for heatmap)
+  const daily = {};
+  rows.forEach(({ date }) => { daily[date] = (daily[date] || 0) + 1; });
+
+  res.json({ year: y, month: m, people, daily });
+});
+
 // Fallback → SPA
 app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

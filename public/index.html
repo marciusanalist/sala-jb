@@ -355,6 +355,186 @@
       transition: all .15s; margin-left: auto;
     }
     .names-gear:hover { background: var(--bg); color: var(--t2); }
+
+    /* ── Tab bar ─────────────────────────────── */
+    .tab-bar {
+      background: var(--sur);
+      border-bottom: 1px solid var(--bdr);
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      position: sticky;
+      top: 56px;
+      z-index: 99;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 13px; font-weight: 500;
+      color: var(--t3);
+      background: none; border: none; cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all .15s; font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--t1); }
+    .tab-btn.active { color: var(--pk); border-bottom-color: var(--pk); font-weight: 600; }
+
+    /* ── Frequency view ─────────────────────── */
+    #freq-view {
+      max-width: 1280px; margin: 0 auto;
+      padding: 24px 20px 60px;
+      display: none; flex-direction: column; gap: 20px;
+    }
+    #freq-view.visible { display: flex; }
+
+    .freq-month-nav {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .freq-month-lbl {
+      font-size: 18px; font-weight: 600;
+      min-width: 210px; text-align: center; color: var(--t1);
+    }
+
+    .freq-cards {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    @media (max-width: 780px) { .freq-cards { grid-template-columns: repeat(2, 1fr); } }
+
+    .freq-card {
+      background: var(--sur); border: 1px solid var(--bdr);
+      border-radius: var(--r); padding: 16px 20px;
+    }
+    .freq-card-label {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .5px; color: var(--t3);
+    }
+    .freq-card-value {
+      font-size: 30px; font-weight: 300; color: var(--t1);
+      margin-top: 4px; letter-spacing: -1px;
+    }
+    .freq-card-sub { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+    .freq-section {
+      background: var(--sur); border: 1px solid var(--bdr);
+      border-radius: var(--r); padding: 20px 24px;
+    }
+    .freq-section-title {
+      font-size: 13px; font-weight: 600; color: var(--t1);
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--bdr);
+    }
+
+    /* Heatmap (calendar grid) */
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(36px, 1fr));
+      gap: 3px;
+      min-width: 300px;
+    }
+    .hm-header {
+      text-align: center; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .4px;
+      color: var(--t3); padding-bottom: 4px;
+    }
+    .hm-cell {
+      aspect-ratio: 1; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1px;
+      font-size: 11px; font-weight: 500; cursor: default;
+      transition: transform .1s; position: relative;
+    }
+    .hm-cell:hover { transform: scale(1.12); z-index: 1; }
+    .hm-cell .hm-day { font-size: 11px; font-weight: 400; }
+    .hm-cell .hm-count { font-size: 9px; font-weight: 700; opacity: .85; }
+    .hm-cell.empty { background: transparent !important; cursor: default; }
+    .hm-cell.empty:hover { transform: none; }
+    .hm-cell.wknd  { background: #F0F0F0; color: var(--t4); }
+    .hm-cell.c0    { background: #F0F0F0; color: var(--t4); }
+    .hm-cell.c1    { background: #FCE8F3; color: #9E2660; }
+    .hm-cell.c2    { background: #F4C2DC; color: #7A1E50; }
+    .hm-cell.c3    { background: #E87BB4; color: #fff; }
+    .hm-cell.c4    { background: #E83E8C; color: #fff; }
+    .hm-cell.c5    { background: #9E2660; color: #fff; }
+
+    .hm-legend {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 12px; font-size: 10px; color: var(--t3);
+    }
+    .hm-legend-boxes { display: flex; gap: 3px; }
+    .hm-legend-box {
+      width: 14px; height: 14px; border-radius: 3px;
+    }
+
+    /* Ranking / bar chart */
+    .rank-list { display: flex; flex-direction: column; gap: 10px; }
+    .rank-item {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      align-items: center; gap: 12px;
+    }
+    .rank-pos {
+      font-size: 11px; font-weight: 700; color: var(--t4);
+      text-align: right; flex-shrink: 0;
+    }
+    .rank-pos.gold   { color: #F5A623; }
+    .rank-pos.silver { color: #9B9B9B; }
+    .rank-pos.bronze { color: #C07230; }
+    .rank-center { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .rank-name {
+      font-size: 12px; color: var(--t1); font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rank-bar-wrap {
+      height: 6px; background: #F0F0F0; border-radius: 3px; overflow: hidden;
+    }
+    .rank-bar {
+      height: 100%; background: var(--tc); border-radius: 3px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+    .rank-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+    .rank-days { font-size: 13px; font-weight: 700; color: var(--tc); }
+    .rank-pct  { font-size: 10px; color: var(--t3); }
+
+    /* Person calendar */
+    .person-list { display: flex; flex-direction: column; gap: 4px; }
+    .person-row {
+      border: 1px solid var(--bdr); border-radius: var(--rsm); overflow: hidden;
+    }
+    .person-row-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; cursor: pointer;
+      background: var(--sur); transition: background .1s; user-select: none;
+    }
+    .person-row-head:hover { background: var(--bg); }
+    .person-row-name { font-size: 12px; font-weight: 600; color: var(--t1); flex: 1; }
+    .person-row-count {
+      font-size: 11px; font-weight: 700; color: var(--tc);
+      background: var(--tc-l); padding: 2px 9px; border-radius: 20px; flex-shrink: 0;
+    }
+    .person-row-arrow {
+      font-size: 14px; color: var(--t4);
+      transition: transform .2s; flex-shrink: 0;
+    }
+    .person-row.open .person-row-arrow { transform: rotate(90deg); }
+    .person-row-dates {
+      display: none; flex-wrap: wrap; gap: 4px;
+      padding: 10px 14px 12px; background: #FAFAFA;
+      border-top: 1px solid var(--bdr);
+    }
+    .person-row.open .person-row-dates { display: flex; }
+    .date-chip {
+      font-size: 10px; font-weight: 500;
+      background: var(--tc-l); color: #7A3415;
+      padding: 3px 9px; border-radius: 20px;
+    }
+
+    /* Empty state */
+    .freq-empty {
+      text-align: center; padding: 48px 24px;
+      color: var(--t3); font-size: 13px;
+    }
+    .freq-empty-icon { font-size: 36px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -363,7 +543,7 @@
 <header>
   <div class="logo">
     <div class="logo-mark">
-      <img src="/logo-sal-pink.svg" alt="Grupo Sal" width="40" height="40" style="display:block;">
+      <div style="width:32px;height:32px;background:var(--pk);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;letter-spacing:-.5px;">SAL</div>
     </div>
     <div class="logo-text">Grupo Sal <small>· Agendamento de salas</small></div>
   </div>
@@ -378,10 +558,51 @@
   <button class="names-gear" id="btn-names" title="Gerenciar lista de nomes">Nomes &#9998;</button>
 </header>
 
+<!-- ═══ TAB BAR ════════════════════════════════════════════ -->
+<nav class="tab-bar">
+  <button class="tab-btn active" id="tab-reservas"   onclick="switchTab('reservas')">Reservas</button>
+  <button class="tab-btn"        id="tab-frequencia" onclick="switchTab('frequencia')">Frequência</button>
+</nav>
+
 <!-- ═══ MAIN ══════════════════════════════════════════════ -->
 <main id="main">
   <p style="padding:40px;text-align:center;color:var(--t3);">Carregando…</p>
 </main>
+
+<!-- ═══ FREQUENCY VIEW ════════════════════════════════════ -->
+<div id="freq-view">
+
+  <!-- Month nav -->
+  <div class="freq-month-nav">
+    <button class="nav-btn" onclick="freqChangeMonth(-1)">&#8249;</button>
+    <span class="freq-month-lbl" id="freq-month-lbl"></span>
+    <button class="nav-btn" onclick="freqChangeMonth(1)">&#8250;</button>
+  </div>
+
+  <!-- Summary cards -->
+  <div id="freq-summary" class="freq-cards"></div>
+
+  <!-- Heatmap -->
+  <div class="freq-section">
+    <div class="freq-section-title">Mapa do Mês — presenças por dia</div>
+    <div class="heatmap-wrap">
+      <div id="freq-heatmap"></div>
+    </div>
+  </div>
+
+  <!-- Ranking / bar chart -->
+  <div class="freq-section">
+    <div class="freq-section-title">Ranking de Frequência</div>
+    <div id="freq-chart"></div>
+  </div>
+
+  <!-- Calendar per person -->
+  <div class="freq-section">
+    <div class="freq-section-title">Calendário por Pessoa — clique para expandir</div>
+    <div id="freq-people"></div>
+  </div>
+
+</div>
 
 <!-- ═══ BOOKING MODAL ════════════════════════════════════ -->
 <div class="overlay" id="bk-overlay">
@@ -907,6 +1128,264 @@ document.addEventListener('keydown', e => {
   await loadAll();
   await fullRender();
 })();
+
+/* ═══════════════════════════════════════════════════════════
+   FREQUENCY / ATTENDANCE DASHBOARD
+   ═══════════════════════════════════════════════════════════ */
+
+let freqYear  = new Date().getFullYear();
+let freqMonth = new Date().getMonth() + 1;
+let activeTab = 'reservas';
+
+/* ─── Tab switching ──────────────────────────────────────── */
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-reservas').classList.toggle('active', tab === 'reservas');
+  document.getElementById('tab-frequencia').classList.toggle('active', tab === 'frequencia');
+
+  const weekNav = document.querySelector('.week-nav');
+  const mainEl  = document.getElementById('main');
+  const freqEl  = document.getElementById('freq-view');
+
+  if (tab === 'reservas') {
+    mainEl.style.display  = '';
+    weekNav.style.display = '';
+    freqEl.classList.remove('visible');
+  } else {
+    mainEl.style.display  = 'none';
+    weekNav.style.display = 'none';
+    freqEl.classList.add('visible');
+    freqYear  = freqYear  || new Date().getFullYear();
+    freqMonth = freqMonth || new Date().getMonth() + 1;
+    loadFrequency();
+  }
+}
+
+/* ─── Month navigation ───────────────────────────────────── */
+function freqChangeMonth(delta) {
+  freqMonth += delta;
+  if (freqMonth < 1)  { freqMonth = 12; freqYear--; }
+  if (freqMonth > 12) { freqMonth = 1;  freqYear++; }
+  loadFrequency();
+}
+
+/* ─── Load & render ──────────────────────────────────────── */
+async function loadFrequency() {
+  document.getElementById('freq-heatmap').innerHTML =
+    '<p style="color:var(--t3);padding:24px 0;">Carregando…</p>';
+  document.getElementById('freq-chart').innerHTML   = '';
+  document.getElementById('freq-people').innerHTML  = '';
+  document.getElementById('freq-summary').innerHTML = '';
+
+  try {
+    const data = await apiGet(`/api/frequency?year=${freqYear}&month=${freqMonth}`);
+    renderFrequency(data);
+  } catch(e) {
+    document.getElementById('freq-heatmap').innerHTML =
+      '<p style="color:var(--t3);">Erro ao carregar dados.</p>';
+  }
+}
+
+function heatColor(count) {
+  if (!count || count === 0) return 'c0';
+  if (count <= 2)  return 'c1';
+  if (count <= 5)  return 'c2';
+  if (count <= 9)  return 'c3';
+  if (count <= 15) return 'c4';
+  return 'c5';
+}
+
+function renderFrequency({ year, month, people, daily }) {
+  /* Month label */
+  document.getElementById('freq-month-lbl').textContent =
+    `${MONTHS_LG[month - 1]} ${year}`;
+
+  /* ── Working days ── */
+  const lastDay = new Date(year, month, 0).getDate();
+  let workingDays = 0;
+  for (let d = 1; d <= lastDay; d++) {
+    const wd = new Date(year, month - 1, d).getDay();
+    if (wd >= 1 && wd <= 5) workingDays++;
+  }
+
+  /* ── Summary stats ── */
+  const totalPresencas = people.reduce((s, p) => s + p.days, 0);
+
+  let busiestDate = null, busiestCount = 0;
+  Object.entries(daily).forEach(([d, c]) => {
+    if (c > busiestCount) { busiestCount = c; busiestDate = d; }
+  });
+
+  /* Best weekday (avg attendance) */
+  const wdTotals = {1:0,2:0,3:0,4:0,5:0};
+  const wdCounts = {1:0,2:0,3:0,4:0,5:0};
+  Object.entries(daily).forEach(([date, count]) => {
+    const wd = new Date(date + 'T12:00:00').getDay();
+    if (wd >= 1 && wd <= 5) { wdTotals[wd] += count; wdCounts[wd]++; }
+  });
+  const WD_NAMES = {1:'Segunda',2:'Terça',3:'Quarta',4:'Quinta',5:'Sexta'};
+  let bestWd = null, bestAvg = 0;
+  for (let wd = 1; wd <= 5; wd++) {
+    if (wdCounts[wd]) {
+      const avg = wdTotals[wd] / wdCounts[wd];
+      if (avg > bestAvg) { bestAvg = avg; bestWd = wd; }
+    }
+  }
+
+  document.getElementById('freq-summary').innerHTML = `
+    <div class="freq-card">
+      <div class="freq-card-label">Pessoas presentes</div>
+      <div class="freq-card-value">${people.length}</div>
+      <div class="freq-card-sub">no mês</div>
+    </div>
+    <div class="freq-card">
+      <div class="freq-card-label">Total de presenças</div>
+      <div class="freq-card-value">${totalPresencas}</div>
+      <div class="freq-card-sub">${workingDays} dias úteis</div>
+    </div>
+    <div class="freq-card">
+      <div class="freq-card-label">Dia mais cheio</div>
+      <div class="freq-card-value">${busiestDate ? busiestCount : '—'}</div>
+      <div class="freq-card-sub">${busiestDate ? dateBR(busiestDate) : 'sem dados'}</div>
+    </div>
+    <div class="freq-card">
+      <div class="freq-card-label">Dia preferido da semana</div>
+      <div class="freq-card-value" style="font-size:20px">${bestWd ? WD_NAMES[bestWd] : '—'}</div>
+      <div class="freq-card-sub">${bestWd ? bestAvg.toFixed(1) + ' pessoas em média' : 'sem dados'}</div>
+    </div>
+  `;
+
+  renderHeatmap(year, month, lastDay, daily);
+  renderRanking(people, workingDays);
+  renderPersonCalendar(people, year, month);
+}
+
+function dateBR(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  const date = new Date(dateStr + 'T12:00:00');
+  return `${DAYS_SHORT[date.getDay()]} ${d}/${m}`;
+}
+
+/* ─── Heatmap (calendar grid) ────────────────────────────── */
+function renderHeatmap(year, month, lastDay, daily) {
+  const pad = n => String(n).padStart(2, '0');
+  const WD_LABELS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+
+  // Start weekday offset (Mon=0)
+  let startWd = new Date(year, month - 1, 1).getDay();
+  startWd = (startWd === 0) ? 6 : startWd - 1;
+
+  let html = '<div class="heatmap-grid">';
+  WD_LABELS.forEach(d => html += `<div class="hm-header">${d}</div>`);
+
+  // Empty cells before month start
+  for (let i = 0; i < startWd; i++)
+    html += `<div class="hm-cell empty"></div>`;
+
+  for (let d = 1; d <= lastDay; d++) {
+    const wd  = new Date(year, month - 1, d).getDay();
+    const isW = (wd === 0 || wd === 6);
+    const ds  = `${year}-${pad(month)}-${pad(d)}`;
+    const cnt = daily[ds] || 0;
+
+    if (isW) {
+      html += `<div class="hm-cell wknd"><span class="hm-day">${d}</span></div>`;
+    } else {
+      const cls = heatColor(cnt);
+      html += `<div class="hm-cell ${cls}" title="${cnt ? cnt + ' pessoa' + (cnt>1?'s':'') : 'sem reservas'}">
+        <span class="hm-day">${d}</span>
+        ${cnt > 0 ? `<span class="hm-count">${cnt}</span>` : ''}
+      </div>`;
+    }
+  }
+  html += '</div>';
+
+  // Legend
+  html += `<div class="hm-legend">
+    <span>Menos</span>
+    <div class="hm-legend-boxes">
+      <div class="hm-legend-box c0" style="background:#F0F0F0"></div>
+      <div class="hm-legend-box c1" style="background:#FCE8F3"></div>
+      <div class="hm-legend-box c2" style="background:#F4C2DC"></div>
+      <div class="hm-legend-box c3" style="background:#E87BB4"></div>
+      <div class="hm-legend-box c4" style="background:#E83E8C"></div>
+      <div class="hm-legend-box c5" style="background:#9E2660"></div>
+    </div>
+    <span>Mais pessoas</span>
+  </div>`;
+
+  document.getElementById('freq-heatmap').innerHTML = html;
+}
+
+/* ─── Ranking bar chart ──────────────────────────────────── */
+function renderRanking(people, workingDays) {
+  if (!people.length) {
+    document.getElementById('freq-chart').innerHTML =
+      '<div class="freq-empty"><div class="freq-empty-icon">📋</div>Nenhuma reserva de mesa no período</div>';
+    return;
+  }
+
+  const medals = ['gold','silver','bronze'];
+
+  const html = '<div class="rank-list">' +
+    people.map((p, i) => {
+      const pct = workingDays > 0 ? (p.days / workingDays * 100).toFixed(0) : 0;
+      const barW = workingDays > 0 ? (p.days / workingDays * 100).toFixed(1) : 0;
+      const posClass = i < 3 ? medals[i] : '';
+      return `
+        <div class="rank-item">
+          <div class="rank-pos ${posClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i + 1}</div>
+          <div class="rank-center">
+            <div class="rank-name" title="${esc(p.name)}">${esc(p.name)}</div>
+            <div class="rank-bar-wrap">
+              <div class="rank-bar" style="width:${barW}%"></div>
+            </div>
+          </div>
+          <div class="rank-right">
+            <span class="rank-days">${p.days}d</span>
+            <span class="rank-pct">${pct}%</span>
+          </div>
+        </div>`;
+    }).join('') +
+    '</div>';
+
+  document.getElementById('freq-chart').innerHTML = html;
+}
+
+/* ─── Calendar per person ────────────────────────────────── */
+function renderPersonCalendar(people, year, month) {
+  if (!people.length) {
+    document.getElementById('freq-people').innerHTML =
+      '<div class="freq-empty"><div class="freq-empty-icon">👥</div>Nenhuma reserva no período</div>';
+    return;
+  }
+
+  const html = '<div class="person-list">' +
+    people.map((p, i) => `
+      <div class="person-row" id="pr-${i}">
+        <div class="person-row-head" onclick="togglePerson(${i})">
+          <span class="person-row-name">${esc(p.name)}</span>
+          <span class="person-row-count">${p.days} dia${p.days > 1 ? 's' : ''}</span>
+          <span class="person-row-arrow">›</span>
+        </div>
+        <div class="person-row-dates">
+          ${p.dates.map(d => {
+            const date = new Date(d + 'T12:00:00');
+            const day  = date.getDate();
+            const wd   = DAYS_SHORT[date.getDay()];
+            const mo   = String(month).padStart(2,'0');
+            return `<span class="date-chip">${wd} ${String(day).padStart(2,'0')}/${mo}</span>`;
+          }).join('')}
+        </div>
+      </div>`).join('') +
+    '</div>';
+
+  document.getElementById('freq-people').innerHTML = html;
+}
+
+function togglePerson(i) {
+  document.getElementById(`pr-${i}`).classList.toggle('open');
+}
 </script>
 
 </body>
